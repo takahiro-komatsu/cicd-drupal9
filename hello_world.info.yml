@@ -1,0 +1,5 @@
+name: Hello World
+type: module
+description: Hello World module
+package: Custom
+core_version_requirement: ^9

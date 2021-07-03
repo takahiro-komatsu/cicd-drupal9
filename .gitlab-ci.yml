@@ -1,0 +1,56 @@
+stages:
+  - build
+  - test
+  - deploy
+
+default:
+  tags:
+    - linux
+#    - shell-exe
+    - docker-exe
+
+before_script:
+  - echo "ここに各ジョブの実行前に行うことを記載します"
+  - pwd
+  - php -v
+  - composer --version
+
+after_script:
+  - echo "ここに各ジョブの実行後に行うことを記載します"
+
+build1:
+  stage: build
+  script:
+    - echo "ここにビルド操作を記載します"
+
+test1:
+  stage: test
+  script:
+    - echo "テスト1"
+    - apt-get update
+    - apt-get install git -y
+    - composer global require drupal/coder
+    - composer global show -P 
+    - export PATH="$PATH:$HOME/.composer/vendor/bin"
+    - phpcs -i
+    - composer global require drupal/coder dealerdirect/phpcodesniffer-composer-installer
+    - phpcs --config-set installed_paths ~/.composer/vendor/drupal/coder/coder_sniffer
+    - phpcs -i
+    - ls -la
+    - pwd
+    - phpcs --standard=Drupal --extensions=php,module,inc,install,test,profile,theme,css,info,txt,md,yml ./
+
+test2:
+  stage: test
+  script:
+    - echo "ここに書いたテスト操作は並行して実行されます"
+
+deploy1:
+  stage: deploy
+  script:
+    - echo "ここにデプロイ操作を記載します"
+  artifacts:
+    name: "$CI_PROJECT_NAME"
+    paths:
+      - ./
+    expire_in: 10 min
